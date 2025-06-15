@@ -1,0 +1,10 @@
+name: Exemplos e contra-exemplos de páginas acessíveis
+markdown: kramdown
+url: http://talitapagani.com/paginas-acessiveis
+baseurl: /paginas-acessiveis
+include: ['_pages']
+collections:
+  examples:
+    output: true
+    permalink: /:collection/:title/
+description: TBD
