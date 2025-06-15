@@ -1,0 +1,72 @@
+body {
+	font-size: 1.3rem;
+	line-height: 1.5em;
+}
+
+a,
+a:link {
+	color: $link-color;
+	text-decoration: underline;
+}
+
+a:hover,
+a:focus {
+	color: $link-hover-color;
+	text-decoration: none;
+}
+
+a:focus {
+	outline: 2px dotted $link-hover-color;
+}
+
+a:active {
+	color: $link-color;
+}
+
+.highlighter-rouge {
+	font-size: 1.5rem;
+	color: $secondary-dark-color;
+	font-weight: 700;
+}
+
+/* HEADING */
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 700;
+	line-height: 1.2em;
+}
+
+h2, h3, h4, h5, h6 {
+	margin: 3rem 0 1rem 0;
+}
+
+h1 {
+	font-size: 3rem;
+	color: $secondary-dark-color;
+	margin: 1rem 0 1rem 0;
+}
+
+h2 {
+	font-size: 2.3rem;
+	color: $primary-dark-color;
+}
+
+h3 {
+	font-size: 2rem;
+	color: $secondary-dark-color;
+}
+
+h4 {
+	font-size: 1.75rem;
+	color: $text-color;
+}
+
+h5 {
+	font-size: 1.5rem;
+	color: $text-color;
+}
+
+h6 {
+	font-size: 1rem;
+	color: $text-color;
+}
