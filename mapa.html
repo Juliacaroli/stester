@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interativo - Turismo em Guaratuba</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+      crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+        crossorigin=""></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">📍</div>
+                    <div class="logo-text">
+                        <h1>Turismo em Guaratuba</h1>
+                        <p>Paraná - Brasil</p>
+                    </div>
+                </a>
+
+                <nav class="nav">
+                    <a href="praias.html">Praias</a>
+                    <a href="pontos-turisticos.html">Pontos Turísticos</a>
+                    <a href="gastronomia.html">Gastronomia</a>
+                    <a href="mapa.html">Mapa Interativo</a>
+                </nav>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" id="mobileMenuClose">✕</button>
+        <nav class="mobile-nav">
+            <a href="praias.html">Praias</a>
+            <a href="pontos-turisticos.html">Pontos Turísticos</a>
+            <a href="gastronomia.html">Gastronomia</a>
+            <a href="mapa.html">Mapa Interativo</a>
+        </nav>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>
+                Mapa Interativo de
+                <span class="gradient-text" style="background: linear-gradient(to right, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Guaratuba
+                </span>
+            </h1>
+            <p>
+                Explore todos os pontos de interesse da cidade através do nosso mapa interativo. Clique nos marcadores para mais informações.
+            </p>
+        </div>
+    </section>
+
+    <!-- Search and Filter -->
+    <section class="section" style="padding-top: 2rem; padding-bottom: 2rem;">
+        <div class="container">
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar localização...">
+                </div>
+                <div class="filters">
+                    <button class="filter-btn active" onclick="setFilter('Todos', this)">Todos</button>
+                    <button class="filter-btn" onclick="setFilter('Praia', this)">Praia</button>
+                    <button class="filter-btn" onclick="setFilter('Mirante', this)">Mirante</button>
+                    <button class="filter-btn" onclick="setFilter('Histórico', this)">Histórico</button>
+                    <button class="filter-btn" onclick="setFilter('Natural', this)">Natural</button>
+                    <button class="filter-btn" onclick="setFilter('Gastronomia', this)">Gastronomia</button>
+                    <button class="filter-btn" onclick="setFilter('Cultural', this)">Cultural</button>
+                    <button class="filter-btn" onclick="setFilter('Transporte', this)">Transporte</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Map -->
+    <section class="section" style="padding-top: 2rem;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            
+            <!-- Map Area -->
+            <div>
+                <div class="card">
+                    <div id="interactiveMap" style="height: 600px; border-radius: 0.75rem;">
+                        <div class="map-loading">
+                            <div class="loading-spinner"></div>
+                            Carregando mapa interativo...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Locations List -->
+            <div>
+                <h3 style="font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem;">
+                    Localizações (<span id="locationCount">0</span>)
+                </h3>
+                <div style="max-height: 600px; overflow-y: auto;" id="locationsList">
+                    <!-- Locations will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Map Legend -->
+    <section class="section bg-white">
+        <div class="container text-center">
+            <h3 class="section-title">Legenda do Mapa</h3>
+            <p class="section-description">Identifique facilmente os diferentes tipos de localizações</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="map-marker color-blue" style="position: static; width: 1rem; height: 1rem;"></div>
+                    <span style="font-size: 0.875rem; color: #475569;">Praias</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="map-marker color-emerald" style="position: static; width: 1rem; height: 1rem;"></div>
+                    <span style="font-size: 0.875rem; color: #475569;">Mirantes</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="map-marker color-purple" style="position: static; width: 1rem; height: 1rem;"></div>
+                    <span style="font-size: 0.875rem; color: #475569;">Histórico</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="map-marker color-red" style="position: static; width: 1rem; height: 1rem;"></div>
+                    <span style="font-size: 0.875rem; color: #475569;">Gastronomia</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="map-marker color-cyan" style="position: static; width: 1rem; height: 1rem;"></div>
+                    <span style="font-size: 0.875rem; color: #475569;">Natural</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="map-marker color-yellow" style="position: static; width: 1rem; height: 1rem;"></div>
+                    <span style="font-size: 0.875rem; color: #475569;">Cultural</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="map-marker color-orange" style="position: static; width: 1rem; height: 1rem;"></div>
+                    <span style="font-size: 0.875rem; color: #475569;">Transporte</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="logo-icon" style="width: 2rem; height: 2rem;">📍</div>
+                        <h4>Turismo Guaratuba</h4>
+                    </div>
+                    <p>Descubra as belezas naturais de Guaratuba, onde o mar encontra a mata atlântica em perfeita harmonia.</p>
+                </div>
+                <div class="footer-section">
+                    <h5>Contato</h5>
+                    <div class="footer-contact">📞 <span>(41) 99999-9999</span></div>
+                    <div class="footer-contact">✉️ <span>contato@turismoguaratuba.com.br</span></div>
+                    <div class="footer-contact">📍 <span>Centro, Guaratuba - PR</span></div>
+                </div>
+                <div class="footer-section">
+                    <h5>Redes Sociais</h5>
+                    <div class="footer-social">
+                        <a href="#" title="Instagram">📷</a>
+                        <a href="#" title="Facebook">📘</a>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.875rem; color: #94a3b8;">
+                        Siga-nos para acompanhar as novidades e dicas de turismo em Guaratuba.
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Turismo Guaratuba. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function initMapaPage() {
+            filterMapLocations();
+        }
+
+        function filterMapLocations() {
+            const filteredLocations = mapLocations.filter(location => {
+                const matchesType = selectedCategory === 'Todos' || location.type === selectedCategory;
+                const matchesSearch = location.name.toLowerCase().includes(searchTerm);
+                return matchesType && matchesSearch;
+            });
+            
+            updateLocationsList(filteredLocations);
+            updateMapMarkers(filteredLocations);
+            updateLocationCount(filteredLocations.length);
+        }
+
+        function updateLocationsList(locations) {
+            const list = document.getElementById('locationsList');
+            list.innerHTML = '';
+            
+            locations.forEach(location => {
+                const item = document.createElement('div');
+                item.className = 'card fade-in';
+                item.style.marginBottom = '0.75rem';
+                item.style.cursor = 'pointer';
+                item.onclick = () => {
+                    map.flyTo([location.coordinates.lat, location.coordinates.lng], 15);
+                    // Open popup if it exists
+                    if (location.popup) {
+                        location.popup.openOn(map);
+                    }
+                };
+                
+                item.innerHTML = `
+                    <div class="card-content">
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <div class="map-marker ${location.color}" style="position: static; width: 1rem; height: 1rem; margin-top: 0.25rem; flex-shrink: 0;"></div>
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="font-weight: 500; color: #1e293b; margin-bottom: 0.25rem;">${location.name}</h4>
+                                <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">${location.type}</p>
+                                <p style="font-size: 0.75rem; color: #64748b; line-height: 1.4;">${location.description}</p>
+                            </div>
+                            <button style="background: none; border: none; color: #64748b; font-size: 1rem; cursor: pointer;">
+                                🧭
+                            </button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function updateMapMarkers(locations) {
+            // Clear existing markers
+            if (map) {
+                map.eachLayer(layer => {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+            }
+
+            locations.forEach(location => {
+                const marker = L.marker([location.coordinates.lat, location.coordinates.lng]).addTo(map);
+                
+                // Create popup content
+                let popupContent = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div class="map-marker ${location.color}" style="position: static; width: 1rem; height: 1rem;"></div>
+                        <h4 style="font-weight: 500; color: #1e293b; margin-bottom: 0;">${location.name}</h4>
+                    </div>
+                    <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">${location.type}</p>
+                    <p style="font-size: 0.75rem; color: #64748b; line-height: 1.4; margin-bottom: 0.75rem;">${location.description}</p>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-primary" onclick="openInGoogleMaps(${location.coordinates.lat}, ${location.coordinates.lng})" style="flex: 1; background: #8b5cf6; padding: 0.5rem;">
+                            Ver no Google Maps
+                        </button>
+                    </div>
+                `;
+
+                // Bind popup to marker
+                const popup = L.popup({
+                    closeButton: false,
+                    className: 'custom-popup'
+                }).setContent(popupContent);
+                marker.bindPopup(popup);
+
+                // Store popup for later use
+                location.popup = popup;
+            });
+        }
+
+        function updateLocationCount(count) {
+            document.getElementById('locationCount').textContent = count;
+        }
+
+        
+    </script>
+    <script>
+        let map;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize map
+            map = L.map('interactiveMap', {
+                center: [-25.8667, -48.5667], // Guaratuba coordinates
+                zoom: 13,
+                attributionControl: false
+            });
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(map);
+
+            // Remove loading message once tiles are loaded
+            map.on('tileload', function() {
+                const loadingDiv = document.querySelector('.map-loading');
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+            });
+
+            map.on('tileloaderror', function() {
+                const loadingDiv = document.querySelector('.map-loading');
+                 if (loadingDiv) {
+                    loadingDiv.textContent = 'Erro ao carregar o mapa. Verifique sua conexão com a internet.';
+                }
+            });
+
+            // Initial map locations
+            filterMapLocations();
+        });
+    </script>
+    <script>
+    // A função initMapaPage agora está no script.js principal
+    // Apenas garantir que seja chamada quando a página carregar
+    document.addEventListener('DOMContentLoaded', () => {
+        initMapaPage();
+    });
+</script>
+</body>
+</html>

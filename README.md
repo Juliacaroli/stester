@@ -1,2 +1,2 @@
-# paginas-acessiveis
-Exemplo de páginas HTML acessíveis, construídas em HTML, CSS e JS puro, demostrando vários componentes interativos construídos de forma inclusiva.
+# HTML/JavaScript-Acessibilidade
+Exemplo de botões de acessibilidade em JavaScript de alto contraste e aumentar/diminuir fonte junto com a base HTML e CSS
